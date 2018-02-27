@@ -1,5 +1,7 @@
 package ru.gb.android.time;
 
+import android.util.Log;
+
 public class Timer {
 
     private int id;
@@ -19,10 +21,12 @@ public class Timer {
         this.startHours = hours;
         this.startMinutes = minutes;
         this.startSeconds = seconds;
+        resetTimer();
+        //Log.e("Timer", "constructor");
     }
 
     public String getCurrentTime(){
-        return "currenttime";//String.format("%2d:%2d:%2d",this.getHours(), this.getMinutes(), this.getSeconds());
+        return String.format("%2d:%2d:%2d",this.getHours(), this.getMinutes(), this.getSeconds());
     }
 
     public int getHours() {

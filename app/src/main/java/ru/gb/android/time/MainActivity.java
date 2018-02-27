@@ -3,7 +3,9 @@ package ru.gb.android.time;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,10 +27,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.widget.LinearLayout.VERTICAL;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     List<Timer> elements;
     //ArrayAdapter<Timer> adapter;
+    RecyclerView.Adapter<MyViewHolder> adapter;
 
     RecyclerView recyclerView;
     Toolbar toolbar;
@@ -83,14 +88,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //Создаем массив элементов для списка
         elements = new ArrayList<>();
-        elements.add(new Timer(0,5,0));
+        //Log.e("Main","init");
+        elements.add(new Timer(10,15,20));
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         recyclerView = findViewById(R.id.timer_list);
         //adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, elements);
-        recyclerView.setAdapter(new MyAdapter());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new MyAdapter();
+        recyclerView.setAdapter(adapter);
         registerForContextMenu(recyclerView);
 
         fab = findViewById(R.id.fab);
@@ -162,22 +172,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void clearList() {
         elements.clear();
-        //adapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
     }
 
     private void addElement(int h, int m, int s) {
         elements.add(new Timer(h,m,s));
-        //adapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
     }
 
     private void editElement(int id) {
         elements.get(id).resetTimer();
-        //adapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
     }
 
     private void deleteElement(int id) {
         elements.remove(id);
-        //adapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
     }
 
     @Override

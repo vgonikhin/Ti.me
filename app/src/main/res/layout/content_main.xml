@@ -8,26 +8,10 @@
     tools:context="ru.gb.android.time.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Top" />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/timer_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/textView2"
-        app:layout_constraintLeft_toLeftOf="parent"
-        tools:layout_editor_absoluteX="0dp" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="Bottom"
-        app:layout_constraintTop_toBottomOf="@+id/timer_list"
         app:layout_constraintLeft_toLeftOf="parent"
         tools:layout_editor_absoluteX="0dp" />
 

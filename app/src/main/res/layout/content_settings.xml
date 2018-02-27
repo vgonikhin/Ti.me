@@ -8,7 +8,8 @@
     tools:context="ru.gb.android.time.SettingsActivity"
     tools:showIn="@layout/activity_settings">
 
-    <Switch
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/set_show_notifications"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/set_show_notifications"/>
