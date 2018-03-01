@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,11 +19,8 @@ import android.view.MenuItem;
 import android.view.MenuInflater;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static android.widget.LinearLayout.VERTICAL;
@@ -32,7 +28,6 @@ import static android.widget.LinearLayout.VERTICAL;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     List<Timer> elements;
-    //ArrayAdapter<Timer> adapter;
     RecyclerView.Adapter<MyViewHolder> adapter;
 
     RecyclerView recyclerView;
@@ -40,20 +35,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     FloatingActionButton fab;
     DrawerLayout drawer;
     NavigationView navigationView;
+    TimerDataSource tds;
 
     private class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView timerTextView;
+        private TextView timerTextView, nameTextView;
 
         MyViewHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item_timer, parent, false));
             itemView.setOnClickListener(this);
+            nameTextView = itemView.findViewById(R.id.item_name_text_view);
             timerTextView = itemView.findViewById(R.id.item_timer_text_view);
         }
 
         void bind(int position) {
-            String time = elements.get(position).getCurrentTime();
-            timerTextView.setText(time);
+            nameTextView.setText(elements.get(position).getName());
+            timerTextView.setText(elements.get(position).getCurrentTime());
         }
 
         @Override
@@ -86,10 +83,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        tds = new TimerDataSource(this);
+        tds.open();
         //Создаем массив элементов для списка
-        elements = new ArrayList<>();
+        //elements = tds.getAllTimers();
         //Log.e("Main","init");
-        elements.add(new Timer(10,15,20));
+        tds.addTimer("MyTimer",10,15,20);
+        elements = tds.getAllTimers();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addElement(0,1,0);
+                addElement(0,1,0, "New timer");
             }
         });
 
@@ -171,22 +171,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void clearList() {
-        elements.clear();
+        tds.deleteAll();
+        elements = tds.getAllTimers();
         adapter.notifyDataSetChanged();
     }
 
-    private void addElement(int h, int m, int s) {
-        elements.add(new Timer(h,m,s));
+    private void addElement(int h, int m, int s, String name) {
+        tds.addTimer(name,h,m,s);
+        elements = tds.getAllTimers();
         adapter.notifyDataSetChanged();
     }
 
     private void editElement(int id) {
+        tds.editTimer(id,"Edited timer", 1,2,3);
+        elements = tds.getAllTimers();
         elements.get(id).resetTimer();
         adapter.notifyDataSetChanged();
     }
 
     private void deleteElement(int id) {
-        elements.remove(id);
+        tds.deleteTimer(elements.get(id));
+        elements = tds.getAllTimers();
         adapter.notifyDataSetChanged();
     }
 
@@ -204,5 +209,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onStop() {
+        tds.close();
+        super.onStop();
     }
 }

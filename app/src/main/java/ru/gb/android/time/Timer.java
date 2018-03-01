@@ -14,13 +14,16 @@ public class Timer {
     private int minutes;
     private int seconds;
 
+    private String name;
+
     private final int MAX_MINUTES = 60;
     private final int MAX_SECONDS = 60;
 
-    public Timer(int hours, int minutes, int seconds) {
+    public Timer(int hours, int minutes, int seconds, String name) {
         this.startHours = hours;
         this.startMinutes = minutes;
         this.startSeconds = seconds;
+        this.name = name;
         resetTimer();
         //Log.e("Timer", "constructor");
     }
@@ -28,6 +31,12 @@ public class Timer {
     public String getCurrentTime(){
         return String.format("%2d:%2d:%2d",this.getHours(), this.getMinutes(), this.getSeconds());
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() { return name; }
 
     public int getHours() {
         return hours;
