@@ -12,4 +12,6 @@
     <string name="menu_delete">Delete</string>
     <string name="set_show_notifications">Show notifications</string>
     <string name="title_activity_settings">SettingsActivity</string>
+    <string name="imgbtn_edit_desc">Edit</string>
+    <string name="imgbtn_delete_desc">Delete</string>
 </resources>

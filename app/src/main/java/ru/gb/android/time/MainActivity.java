@@ -19,7 +19,9 @@ import android.view.MenuItem;
 import android.view.MenuInflater;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -39,23 +41,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        private int id;
         private TextView timerTextView, nameTextView;
+        private ImageButton editImageButton, deleteImageButton;
 
         MyViewHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item_timer, parent, false));
             itemView.setOnClickListener(this);
             nameTextView = itemView.findViewById(R.id.item_name_text_view);
             timerTextView = itemView.findViewById(R.id.item_timer_text_view);
+            editImageButton = itemView.findViewById(R.id.item_edit_image_button);
+            deleteImageButton = itemView.findViewById(R.id.item_delete_image_button);
         }
 
         void bind(int position) {
             nameTextView.setText(elements.get(position).getName());
             timerTextView.setText(elements.get(position).getCurrentTime());
+            this.id = elements.get(position).getId();
         }
 
         @Override
         public void onClick(View view) {
+            switch (view.getId()){
+                case R.id.item_name_text_view:
+                case R.id.item_timer_text_view:
+                    Toast.makeText(MainActivity.this.getApplicationContext(), "Clicked",Toast.LENGTH_SHORT).show();
+                    return;
+                case R.id.item_edit_image_button:
+                    editElement(this.id);
+                    return;
+                case R.id.item_delete_image_button:
+                    deleteElement(this.id);
+                    return;
+                default:
+                    return;
+            }
+
         }
+
+
     }
 
     //Адаптер для RecyclerView
@@ -85,9 +109,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         tds = new TimerDataSource(this);
         tds.open();
-        //Создаем массив элементов для списка
-        //elements = tds.getAllTimers();
-        //Log.e("Main","init");
         tds.addTimer("MyTimer",10,15,20);
         elements = tds.getAllTimers();
 
@@ -95,13 +116,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
 
         recyclerView = findViewById(R.id.timer_list);
-        //adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, elements);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new MyAdapter();
         recyclerView.setAdapter(adapter);
-        registerForContextMenu(recyclerView);
 
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -131,7 +150,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -144,29 +162,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.context_menu, menu);
-    }
-
-    // Метод вызывается по нажатию на любой пункт меню. В качестве агрумента приходит item меню.
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        switch (item.getItemId()) {
-            case R.id.menu_edit:
-                editElement(info.position);
-                return true;
-            case R.id.menu_delete:
-                deleteElement(info.position);
-                return true;
-            default:
-                return super.onContextItemSelected(item);
         }
     }
 

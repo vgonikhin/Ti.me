@@ -1,23 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<GridLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/category_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/item_name_text_view"
-        android:layout_width="match_parent"
+    android:orientation="horizontal">
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        tools:text="Name"/>
+        android:orientation="vertical"
+        android:layout_columnWeight="5">
+        <TextView
+            android:id="@+id/item_name_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            tools:text="Name"/>
 
-    <TextView
-        android:id="@+id/item_timer_text_view"
-        android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/item_timer_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            tools:text="Test"/>
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/item_edit_image_button"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        tools:text="Test"/>
-</LinearLayout>
+        android:layout_columnWeight="1"
+        android:contentDescription="@string/imgbtn_edit_desc"
+        android:src="@android:drawable/ic_menu_edit" />
+    <ImageButton
+        android:id="@+id/item_delete_image_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/imgbtn_delete_desc"
+        android:src="@android:drawable/ic_menu_delete"
+        android:layout_columnWeight="1"/>
+</GridLayout>
