@@ -1,7 +1,5 @@
 package ru.gb.android.time;
 
-import android.util.Log;
-
 public class Timer {
 
     private int id;
@@ -19,13 +17,13 @@ public class Timer {
     private final int MAX_MINUTES = 60;
     private final int MAX_SECONDS = 60;
 
-    public Timer(int hours, int minutes, int seconds, String name) {
+    public Timer(int id, int hours, int minutes, int seconds, String name) {
+        this.id = id;
         this.startHours = hours;
         this.startMinutes = minutes;
         this.startSeconds = seconds;
         this.name = name;
         resetTimer();
-        //Log.e("Timer", "constructor");
     }
 
     public String getCurrentTime(){
@@ -36,17 +34,19 @@ public class Timer {
         return id;
     }
 
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
-    public int getHours() {
+    private int getHours() {
         return hours;
     }
 
-    public int getMinutes() {
+    private int getMinutes() {
         return minutes;
     }
 
-    public int getSeconds() {
+    private int getSeconds() {
         return seconds;
     }
 

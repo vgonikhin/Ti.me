@@ -58,8 +58,7 @@ public class TimerDataSource {
                 null);
     }
 
-    public void deleteTimer(Timer timer) {
-        long id = timer.getId();
+    public void deleteTimer(long id) {
         database.delete(DatabaseHelper.TABLE_TIMERS, DatabaseHelper.COLUMN_ID
                 + " = " + id, null);
     }
@@ -80,14 +79,12 @@ public class TimerDataSource {
             timers.add(timer);
             cursor.moveToNext();
         }
-        // обязательно закройте cursor
         cursor.close();
         return timers;
     }
 
     private Timer cursorToTimer(Cursor cursor) {
-        Timer timer = new Timer(cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(1));
-        return timer;
+        return new Timer(cursor.getInt(0), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(1));
     }
 
 }

@@ -3,22 +3,19 @@ package ru.gb.android.time;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.ContextMenu;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MenuInflater;
+import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,13 +68,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Toast.makeText(MainActivity.this.getApplicationContext(), "Clicked",Toast.LENGTH_SHORT).show();
                     return;
                 case R.id.item_edit_image_button:
-                    editElement(this.id);
+                    editElement(this.id, this.getAdapterPosition());
                     return;
                 case R.id.item_delete_image_button:
                     deleteElement(this.id);
-                    return;
-                default:
-                    return;
             }
 
         }
@@ -180,15 +174,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         adapter.notifyDataSetChanged();
     }
 
-    private void editElement(int id) {
+    private void editElement(int id, int position) {
         tds.editTimer(id,"Edited timer", 1,2,3);
         elements = tds.getAllTimers();
-        elements.get(id).resetTimer();
+        elements.get(position).resetTimer();
         adapter.notifyDataSetChanged();
     }
 
     private void deleteElement(int id) {
-        tds.deleteTimer(elements.get(id));
+        tds.deleteTimer(id);
         elements = tds.getAllTimers();
         adapter.notifyDataSetChanged();
     }

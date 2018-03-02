@@ -34,6 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_columnWeight="1"
+        android:layout_gravity="end"
         android:contentDescription="@string/imgbtn_edit_desc"
         android:src="@android:drawable/ic_menu_edit" />
     <ImageButton
@@ -42,5 +43,6 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/imgbtn_delete_desc"
         android:src="@android:drawable/ic_menu_delete"
-        android:layout_columnWeight="1"/>
+        android:layout_columnWeight="1"
+        android:layout_gravity="end" />
 </LinearLayout>
