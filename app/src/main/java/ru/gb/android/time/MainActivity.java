@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             timerTextView = itemView.findViewById(R.id.item_timer_text_view);
             editImageButton = itemView.findViewById(R.id.item_edit_image_button);
             deleteImageButton = itemView.findViewById(R.id.item_delete_image_button);
+            editImageButton.setOnClickListener(this);
+            deleteImageButton.setOnClickListener(this);
         }
 
         void bind(int position) {
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         @Override
         public void onClick(View view) {
             switch (view.getId()){
+                case R.id.category_item:
                 case R.id.item_name_text_view:
                 case R.id.item_timer_text_view:
                     Toast.makeText(MainActivity.this.getApplicationContext(), "Clicked",Toast.LENGTH_SHORT).show();
