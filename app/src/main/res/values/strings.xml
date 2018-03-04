@@ -14,4 +14,6 @@
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="imgbtn_edit_desc">Edit</string>
     <string name="imgbtn_delete_desc">Delete</string>
+    <string name="imgbtn_start_desc">Start</string>
+    <string name="imgbtn_pause_desc">Pause</string>
 </resources>

@@ -40,15 +40,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         private int id;
         private TextView timerTextView, nameTextView;
-        private ImageButton editImageButton, deleteImageButton;
+        private ImageButton startImageButton, pauseImageButton, editImageButton, deleteImageButton;
 
         MyViewHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item_timer, parent, false));
             itemView.setOnClickListener(this);
             nameTextView = itemView.findViewById(R.id.item_name_text_view);
             timerTextView = itemView.findViewById(R.id.item_timer_text_view);
+            startImageButton = itemView.findViewById(R.id.item_start_image_button);
+            pauseImageButton = itemView.findViewById(R.id.item_pause_image_button);
             editImageButton = itemView.findViewById(R.id.item_edit_image_button);
             deleteImageButton = itemView.findViewById(R.id.item_delete_image_button);
+            startImageButton.setOnClickListener(this);
+            pauseImageButton.setOnClickListener(this);
             editImageButton.setOnClickListener(this);
             deleteImageButton.setOnClickListener(this);
         }
@@ -56,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         void bind(int position) {
             nameTextView.setText(elements.get(position).getName());
             timerTextView.setText(elements.get(position).getCurrentTime());
+            setStartPauseVisibility();
             this.id = elements.get(position).getId();
         }
 
@@ -67,6 +72,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 case R.id.item_timer_text_view:
                     Toast.makeText(MainActivity.this.getApplicationContext(), "Clicked",Toast.LENGTH_SHORT).show();
                     return;
+                case R.id.item_start_image_button:
+                    Toast.makeText(MainActivity.this.getApplicationContext(), elements.get(this.getAdapterPosition()).startTimer(),Toast.LENGTH_SHORT).show();
+                    elements.get(this.getAdapterPosition()).setTicking(true);
+                    tds.editTimer(this.id,1);
+                    setStartPauseVisibility();
+                    return;
+                case R.id.item_pause_image_button:
+                    Toast.makeText(MainActivity.this.getApplicationContext(), elements.get(this.getAdapterPosition()).pauseTimer(),Toast.LENGTH_SHORT).show();
+                    elements.get(this.getAdapterPosition()).setTicking(false);
+                    tds.editTimer(this.id,0);
+                    setStartPauseVisibility();
+                    return;
                 case R.id.item_edit_image_button:
                     editElement(this.id, this.getAdapterPosition());
                     return;
@@ -76,6 +93,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }
 
+        private void setStartPauseVisibility() {
+            if(!elements.get(this.getAdapterPosition()).isTicking()){
+                startImageButton.setVisibility(View.VISIBLE);
+                pauseImageButton.setVisibility(View.INVISIBLE);
+            } else {
+                startImageButton.setVisibility(View.INVISIBLE);
+                pauseImageButton.setVisibility(View.VISIBLE);
+            }
+        }
 
     }
 

@@ -14,12 +14,16 @@ public class TimerDataSource {
     private DatabaseHelper dbHelper;
     private SQLiteDatabase database;
 
-    private String[] notesAllColumn = {
+    private String[] timersAllColumn = {
             DatabaseHelper.COLUMN_ID,
             DatabaseHelper.COLUMN_NAME,
             DatabaseHelper.COLUMN_START_HOURS,
             DatabaseHelper.COLUMN_START_MINUTES,
-            DatabaseHelper.COLUMN_START_SECONDS
+            DatabaseHelper.COLUMN_START_SECONDS,
+            DatabaseHelper.COLUMN_CURRENT_HOURS,
+            DatabaseHelper.COLUMN_CURRENT_MINUTES,
+            DatabaseHelper.COLUMN_CURRENT_SECONDS,
+            DatabaseHelper.COLUMN_TICKING
     };
 
     public TimerDataSource(Context context) {
@@ -40,6 +44,10 @@ public class TimerDataSource {
         values.put(DatabaseHelper.COLUMN_START_HOURS, startHours);
         values.put(DatabaseHelper.COLUMN_START_MINUTES, startMinutes);
         values.put(DatabaseHelper.COLUMN_START_SECONDS, startSeconds);
+        values.put(DatabaseHelper.COLUMN_CURRENT_HOURS,startHours);
+        values.put(DatabaseHelper.COLUMN_CURRENT_MINUTES,startMinutes);
+        values.put(DatabaseHelper.COLUMN_CURRENT_SECONDS,startSeconds);
+        values.put(DatabaseHelper.COLUMN_TICKING,0);
 
         database.insert(DatabaseHelper.TABLE_TIMERS, null, values);
     }
@@ -51,6 +59,21 @@ public class TimerDataSource {
         editedTimer.put(DatabaseHelper.COLUMN_START_HOURS, startHours);
         editedTimer.put(DatabaseHelper.COLUMN_START_MINUTES, startMinutes);
         editedTimer.put(DatabaseHelper.COLUMN_START_SECONDS, startSeconds);
+        editedTimer.put(DatabaseHelper.COLUMN_CURRENT_HOURS,startHours);
+        editedTimer.put(DatabaseHelper.COLUMN_CURRENT_MINUTES,startMinutes);
+        editedTimer.put(DatabaseHelper.COLUMN_CURRENT_SECONDS,startSeconds);
+        editedTimer.put(DatabaseHelper.COLUMN_TICKING,0);
+
+        database.update(DatabaseHelper.TABLE_TIMERS,
+                editedTimer,
+                DatabaseHelper.COLUMN_ID + "=" + id,
+                null);
+    }
+
+    public void editTimer(long id, int ticking) {
+        ContentValues editedTimer = new ContentValues();
+        editedTimer.put(DatabaseHelper.COLUMN_ID, id);
+        editedTimer.put(DatabaseHelper.COLUMN_TICKING,ticking);
 
         database.update(DatabaseHelper.TABLE_TIMERS,
                 editedTimer,
@@ -71,7 +94,7 @@ public class TimerDataSource {
         List<Timer> timers = new ArrayList<>();
 
         Cursor cursor = database.query(DatabaseHelper.TABLE_TIMERS,
-                notesAllColumn, null, null, null, null, null);
+                timersAllColumn, null, null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -84,7 +107,7 @@ public class TimerDataSource {
     }
 
     private Timer cursorToTimer(Cursor cursor) {
-        return new Timer(cursor.getInt(0), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(1));
+        return new Timer(cursor.getInt(0), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(1),cursor.getInt(8));
     }
 
 }
