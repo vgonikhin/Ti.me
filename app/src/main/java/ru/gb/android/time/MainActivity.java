@@ -2,6 +2,7 @@ package ru.gb.android.time;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -132,7 +133,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         tds = new TimerDataSource(this);
         tds.open();
-        tds.addTimer("MyTimer",10,15,20);
         elements = tds.getAllTimers();
 
         toolbar = findViewById(R.id.toolbar);
@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
         if (id == R.id.nav_timers) {

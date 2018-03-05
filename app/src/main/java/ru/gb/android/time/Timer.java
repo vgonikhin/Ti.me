@@ -38,7 +38,7 @@ public class Timer {
     }
 
     public String getCurrentTime(){
-        return String.format("%2d:%2d:%2d",this.getHours(), this.getMinutes(), this.getSeconds());
+        return String.format("%d:%02d:%02d",this.getHours(), this.getMinutes(), this.getSeconds());
     }
 
     public int getId() {

@@ -1,66 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/category_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:layout_margin="2dp"
+    android:background="@android:color/background_light"
+    android:elevation="@dimen/item_elevation"
+    android:orientation="horizontal"
+    android:theme="@style/TimeTheme"
+    tools:targetApi="lollipop">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <TextView
             android:id="@+id/item_name_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_left_margin"
             android:textColor="@android:color/black"
-            android:textStyle="bold"
             android:textSize="16sp"
-            tools:text="Name"/>
+            android:textStyle="bold"
+            tools:text="Name"
+            tools:ignore="RtlHardcoded" />
 
         <TextView
             android:id="@+id/item_timer_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_left_margin"
             android:textColor="@android:color/black"
             android:textSize="18sp"
-            tools:text="Test"/>
+            tools:text="Test"
+            tools:ignore="RtlHardcoded" />
     </LinearLayout>
 
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/item_edit_image_button">
+        android:layout_toLeftOf="@id/item_edit_image_button"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/button_horizontal_margin"
+        android:layout_marginRight="@dimen/button_horizontal_margin"
+        tools:ignore="RtlHardcoded">
+
         <ImageButton
             android:id="@+id/item_start_image_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
+            android:background="#dcedc8"
             android:contentDescription="@string/imgbtn_start_desc"
             android:src="@android:drawable/ic_media_play" />
+
         <ImageButton
             android:id="@+id/item_pause_image_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
+            android:background="#dcedc8"
             android:contentDescription="@string/imgbtn_pause_desc"
-            android:src="@android:drawable/ic_media_pause" />
+            android:src="@android:drawable/ic_media_pause"
+            android:theme="@style/TimeTheme" />
     </FrameLayout>
+
     <ImageButton
         android:id="@+id/item_edit_image_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
+        android:layout_toLeftOf="@id/item_delete_image_button"
+        android:background="#dcedc8"
+        android:layout_centerVertical="true"
+
         android:contentDescription="@string/imgbtn_edit_desc"
         android:src="@android:drawable/ic_menu_edit"
-        android:layout_toLeftOf="@id/item_delete_image_button"/>
+        tools:ignore="RtlHardcoded" />
+
     <ImageButton
         android:id="@+id/item_delete_image_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:background="#dcedc8"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/button_horizontal_margin"
+        android:layout_marginRight="@dimen/text_left_margin"
         android:contentDescription="@string/imgbtn_delete_desc"
         android:src="@android:drawable/ic_menu_delete"
-        android:layout_alignParentRight="true"/>
+        tools:ignore="RtlHardcoded" />
 </RelativeLayout>
