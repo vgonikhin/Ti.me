@@ -1,8 +1,11 @@
 package ru.gb.android.time;
 
-import java.util.Locale;
+import android.util.Log;
 
-public class Timer {
+import java.util.Locale;
+import java.util.TimerTask;
+
+public class TiMeTimer extends TimerTask {
 
     private int id;
     private int startHours;
@@ -12,6 +15,8 @@ public class Timer {
     private int minutes;
     private int seconds;
 
+    private int time;
+
     private boolean ticking;
 
     private String name;
@@ -19,11 +24,12 @@ public class Timer {
     private final int MAX_MINUTES = 60;
     private final int MAX_SECONDS = 60;
 
-    public Timer(int id, int hours, int minutes, int seconds, String name, int ticking) {
+    public TiMeTimer(int id, int hours, int minutes, int seconds, String name, int ticking) {
         this.id = id;
         this.startHours = hours;
         this.startMinutes = minutes;
         this.startSeconds = seconds;
+        this.time = hours*MAX_MINUTES*MAX_SECONDS + minutes*MAX_SECONDS + seconds;
         this.name = name;
         this.ticking = (ticking==1);
         resetTimer();
@@ -75,5 +81,16 @@ public class Timer {
     public String pauseTimer(){
         setTicking(false);
         return getName() + " paused";
+    }
+
+    @Override
+    public void run() {
+        //Log.e("Timer", getId() + " run " + isTicking());
+        if(isTicking()){
+            time--;
+            hours = time/(MAX_MINUTES*MAX_SECONDS);
+            minutes = (time%(MAX_SECONDS*MAX_MINUTES))/MAX_SECONDS;
+            seconds = time%MAX_SECONDS;
+        }
     }
 }

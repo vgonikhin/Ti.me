@@ -90,24 +90,24 @@ public class TimerDataSource {
         database.delete(DatabaseHelper.TABLE_TIMERS, null, null);
     }
 
-    public List<Timer> getAllTimers() {
-        List<Timer> timers = new ArrayList<>();
+    public List<TiMeTimer> getAllTimers() {
+        List<TiMeTimer> timers = new ArrayList<>();
 
         Cursor cursor = database.query(DatabaseHelper.TABLE_TIMERS,
                 timersAllColumn, null, null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            Timer timer = cursorToTimer(cursor);
-            timers.add(timer);
+            TiMeTimer tiMeTimer = cursorToTimer(cursor);
+            timers.add(tiMeTimer);
             cursor.moveToNext();
         }
         cursor.close();
         return timers;
     }
 
-    private Timer cursorToTimer(Cursor cursor) {
-        return new Timer(cursor.getInt(0), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(1),cursor.getInt(8));
+    private TiMeTimer cursorToTimer(Cursor cursor) {
+        return new TiMeTimer(cursor.getInt(0), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(1),cursor.getInt(8));
     }
 
 }

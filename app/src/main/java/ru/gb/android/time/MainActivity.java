@@ -2,6 +2,7 @@ package ru.gb.android.time;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -22,13 +23,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.Timer;
 
 import static android.widget.LinearLayout.VERTICAL;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    List<Timer> elements;
+    List<TiMeTimer> elements;
     RecyclerView.Adapter<MyViewHolder> adapter;
+    Timer timer;
 
     RecyclerView recyclerView;
     Toolbar toolbar;
@@ -158,6 +161,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        timer = new Timer();
+        for(TiMeTimer t : elements){
+            timer.schedule(t,1000,1000);
+        }
+
+        final Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyDataSetChanged();
+                handler.postDelayed(this,1000);
+            }
+        });
     }
 
     @Override
@@ -195,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void addElement(int h, int m, int s, String name) {
         tds.addTimer(name,h,m,s);
         elements = tds.getAllTimers();
+        timer.schedule(elements.get(elements.size()),1000,1000);
         adapter.notifyDataSetChanged();
     }
 
