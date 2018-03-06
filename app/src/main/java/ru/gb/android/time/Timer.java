@@ -1,13 +1,13 @@
 package ru.gb.android.time;
 
+import java.util.Locale;
+
 public class Timer {
 
     private int id;
-
     private int startHours;
     private int startMinutes;
     private int startSeconds;
-
     private int hours;
     private int minutes;
     private int seconds;
@@ -38,7 +38,7 @@ public class Timer {
     }
 
     public String getCurrentTime(){
-        return String.format("%d:%02d:%02d",this.getHours(), this.getMinutes(), this.getSeconds());
+        return String.format(Locale.ENGLISH,"%d:%02d:%02d",this.getHours(), this.getMinutes(), this.getSeconds());
     }
 
     public int getId() {
@@ -68,10 +68,12 @@ public class Timer {
     }
 
     public String startTimer(){
+        setTicking(true);
         return getName() + " started";
     }
 
     public String pauseTimer(){
+        setTicking(false);
         return getName() + " paused";
     }
 }

@@ -75,13 +75,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     return;
                 case R.id.item_start_image_button:
                     Toast.makeText(MainActivity.this.getApplicationContext(), elements.get(this.getAdapterPosition()).startTimer(),Toast.LENGTH_SHORT).show();
-                    elements.get(this.getAdapterPosition()).setTicking(true);
                     tds.editTimer(this.id,1);
                     setStartPauseVisibility();
                     return;
                 case R.id.item_pause_image_button:
                     Toast.makeText(MainActivity.this.getApplicationContext(), elements.get(this.getAdapterPosition()).pauseTimer(),Toast.LENGTH_SHORT).show();
-                    elements.get(this.getAdapterPosition()).setTicking(false);
                     tds.editTimer(this.id,0);
                     setStartPauseVisibility();
                     return;
