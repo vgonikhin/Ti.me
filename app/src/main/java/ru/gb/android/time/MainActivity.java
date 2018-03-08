@@ -1,5 +1,6 @@
 package ru.gb.android.time;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -150,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addElement(0,1,0, "New timer");
+                addTimer();
             }
         });
 
@@ -175,6 +177,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 handler.postDelayed(this,1000);
             }
         });
+    }
+
+    private void addTimer() {
+        Dialog d = new Dialog(this);
+        d.setTitle("Add a new timer");
+        setContentView(R.layout.dialog_add_edit);
+        d.show();
+        addElement(0,1,0, "New timer");
     }
 
     @Override

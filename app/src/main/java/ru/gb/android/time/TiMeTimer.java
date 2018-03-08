@@ -1,7 +1,5 @@
 package ru.gb.android.time;
 
-import android.util.Log;
-
 import java.util.Locale;
 import java.util.TimerTask;
 
@@ -85,7 +83,6 @@ public class TiMeTimer extends TimerTask {
 
     @Override
     public void run() {
-        //Log.e("Timer", getId() + " run " + isTicking());
         if(isTicking()){
             time--;
             hours = time/(MAX_MINUTES*MAX_SECONDS);
