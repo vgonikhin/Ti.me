@@ -1,9 +1,14 @@
 package ru.gb.android.time;
 
+import android.util.Log;
+import android.widget.Toast;
+
 import java.util.Locale;
 import java.util.TimerTask;
 
 public class TiMeTimer extends TimerTask {
+
+    private final String TAG = "TiMeTimer";
 
     private int id;
     private int startHours;
@@ -16,6 +21,7 @@ public class TiMeTimer extends TimerTask {
     private int time;
 
     private boolean ticking;
+    private boolean finished;
 
     private String name;
 
@@ -30,6 +36,7 @@ public class TiMeTimer extends TimerTask {
         this.time = hours*MAX_MINUTES*MAX_SECONDS + minutes*MAX_SECONDS + seconds;
         this.name = name;
         this.ticking = (ticking==1);
+        this.finished = false;
         resetTimer();
     }
 
@@ -39,6 +46,14 @@ public class TiMeTimer extends TimerTask {
 
     public void setTicking(boolean ticking) {
         this.ticking = ticking;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 
     public String getCurrentTime(){
@@ -69,6 +84,8 @@ public class TiMeTimer extends TimerTask {
         hours = startHours;
         minutes = startMinutes;
         seconds = startSeconds;
+        time = hours*MAX_MINUTES*MAX_SECONDS + minutes*MAX_SECONDS + seconds;
+        ticking = false;
     }
 
     public String startTimer(){
@@ -83,11 +100,16 @@ public class TiMeTimer extends TimerTask {
 
     @Override
     public void run() {
+        Log.e(TAG, getId() + " " + getName() + " run " + isTicking() + " time: " + time);
         if(isTicking()){
             time--;
             hours = time/(MAX_MINUTES*MAX_SECONDS);
             minutes = (time%(MAX_SECONDS*MAX_MINUTES))/MAX_SECONDS;
             seconds = time%MAX_SECONDS;
+            if(time==0){
+                setFinished(true);
+                resetTimer();
+            }
         }
     }
 }

@@ -34,6 +34,10 @@ public class TimerDataSource {
         database = dbHelper.getWritableDatabase();
     }
 
+    public boolean isOpen(){
+        return database.isOpen();
+    }
+
     public void close() {
         dbHelper.close();
     }

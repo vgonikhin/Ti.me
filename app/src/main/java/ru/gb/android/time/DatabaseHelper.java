@@ -16,7 +16,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_CURRENT_SECONDS = "current_seconds";
     public static final String COLUMN_TICKING = "ticking";
     public static final String TABLE_TIMERS = "timers";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "timers.db";
 
     public DatabaseHelper(Context context) {
@@ -36,15 +36,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if(oldVersion==1 && newVersion==2) {
+        if(oldVersion==2 && newVersion==3) {
             db.execSQL("ALTER TABLE " + TABLE_TIMERS + " ADD "
                     + COLUMN_CURRENT_HOURS + " NUMBER;");
             db.execSQL("ALTER TABLE " + TABLE_TIMERS + " ADD "
                     + COLUMN_CURRENT_MINUTES + " NUMBER;");
             db.execSQL("ALTER TABLE " + TABLE_TIMERS + " ADD "
                     + COLUMN_CURRENT_SECONDS + " NUMBER;");
-            db.execSQL("ALTER TABLE " + TABLE_TIMERS + " ADD "
-                    + COLUMN_TICKING + " NUMBER;");
         }
     }
 }

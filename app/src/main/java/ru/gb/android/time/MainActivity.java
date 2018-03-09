@@ -1,6 +1,7 @@
 package ru.gb.android.time;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,17 +11,21 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -174,17 +179,56 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void run() {
                 adapter.notifyDataSetChanged();
+                for(TiMeTimer t : elements){
+                    if(t.isFinished()) {
+                        Toast.makeText(MainActivity.this, t.getName() + " finished working", Toast.LENGTH_SHORT).show();
+                        t.setFinished(false);
+                    }
+                }
                 handler.postDelayed(this,1000);
             }
         });
     }
 
     private void addTimer() {
-        Dialog d = new Dialog(this);
-        d.setTitle("Add a new timer");
-        setContentView(R.layout.dialog_add_edit);
-        d.show();
-        addElement(0,1,0, "New timer");
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        View v = getLayoutInflater().inflate(R.layout.dialog_add_edit,null);
+
+        final NumberPicker npHours = v.findViewById(R.id.npHours);
+        final NumberPicker npMinutes = v.findViewById(R.id.npMinutes);
+        final NumberPicker npSeconds = v.findViewById(R.id.npSeconds);
+        npHours.setMinValue(0);
+        npHours.setMaxValue(23);
+        npMinutes.setMinValue(0);
+        npMinutes.setMaxValue(59);
+        npSeconds.setMinValue(0);
+        npSeconds.setMaxValue(59);
+        NumberPicker.Formatter formatter = new NumberPicker.Formatter() {
+            @Override
+            public String format(int i) {
+                return String.format("%02d",i);
+            }
+        };
+        npMinutes.setFormatter(formatter);
+        npSeconds.setFormatter(formatter);
+
+        final EditText editText = v.findViewById(R.id.timer_name_edit_text);
+
+        adb.setPositiveButton("Add timer", new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                addElement(npHours.getValue(),npMinutes.getValue(),npSeconds.getValue(), editText.getText().toString());
+            }
+        });
+        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Toast.makeText(MainActivity.this,"Nothing added",Toast.LENGTH_SHORT).show();
+            }
+        });
+        adb.setView(v);
+        AlertDialog ad = adb.create();
+        ad.show();
     }
 
     @Override
@@ -222,7 +266,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void addElement(int h, int m, int s, String name) {
         tds.addTimer(name,h,m,s);
         elements = tds.getAllTimers();
-        timer.schedule(elements.get(elements.size()),1000,1000);
         adapter.notifyDataSetChanged();
     }
 
@@ -256,8 +299,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    protected void onStop() {
+    protected void onDestroy() {
         tds.close();
-        super.onStop();
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!tds.isOpen()) {
+            tds.open();
+        }
     }
 }
