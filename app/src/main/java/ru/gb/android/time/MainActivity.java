@@ -1,6 +1,6 @@
 package ru.gb.android.time;
 
-import android.app.Dialog;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,13 +16,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
@@ -30,13 +28,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 
 import static android.widget.LinearLayout.VERTICAL;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    List<TiMeTimer> elements;
+    static List<TiMeTimer> elements;
     RecyclerView.Adapter<MyViewHolder> adapter;
     Timer timer;
 
@@ -169,22 +168,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        timer = new Timer();
-        for(TiMeTimer t : elements){
-            timer.schedule(t,1000,1000);
-        }
-
+        onStartService();
         final Handler handler = new Handler();
         handler.post(new Runnable() {
             @Override
             public void run() {
                 adapter.notifyDataSetChanged();
-                for(TiMeTimer t : elements){
-                    if(t.isFinished()) {
-                        Toast.makeText(MainActivity.this, t.getName() + " finished working", Toast.LENGTH_SHORT).show();
-                        t.setFinished(false);
-                    }
-                }
                 handler.postDelayed(this,1000);
             }
         });
@@ -192,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void addTimer() {
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
-        View v = getLayoutInflater().inflate(R.layout.dialog_add_edit,null);
+        @SuppressLint("InflateParams") View v = getLayoutInflater().inflate(R.layout.dialog_add_edit,null);
 
         final NumberPicker npHours = v.findViewById(R.id.npHours);
         final NumberPicker npMinutes = v.findViewById(R.id.npMinutes);
@@ -206,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NumberPicker.Formatter formatter = new NumberPicker.Formatter() {
             @Override
             public String format(int i) {
-                return String.format("%02d",i);
+                return String.format(Locale.ENGLISH,"%02d",i);
             }
         };
         npMinutes.setFormatter(formatter);
@@ -311,4 +300,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             tds.open();
         }
     }
+
+    public void onStartService() {
+        Intent intent = new Intent(getBaseContext(), StartedService.class);
+        intent.putExtra("ServiceParameter","DATA_NEED");
+        startService(intent);
+    }
+
+    public void onStopService(View view) {
+        Intent intent = new Intent(getBaseContext(), StartedService.class);
+        stopService(intent);
+    }
+
 }

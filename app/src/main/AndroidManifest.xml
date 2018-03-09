@@ -24,6 +24,9 @@
             android:label="@string/title_activity_settings"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ProfileActivity"></activity>
+        <service android:name=".StartedService"
+            android:exported="false" />
+
     </application>
 
 </manifest>

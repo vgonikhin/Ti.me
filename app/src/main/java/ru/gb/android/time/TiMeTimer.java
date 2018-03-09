@@ -1,5 +1,7 @@
 package ru.gb.android.time;
 
+import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -7,8 +9,6 @@ import java.util.Locale;
 import java.util.TimerTask;
 
 public class TiMeTimer extends TimerTask {
-
-    private final String TAG = "TiMeTimer";
 
     private int id;
     private int startHours;
@@ -86,6 +86,7 @@ public class TiMeTimer extends TimerTask {
         seconds = startSeconds;
         time = hours*MAX_MINUTES*MAX_SECONDS + minutes*MAX_SECONDS + seconds;
         ticking = false;
+        finished = false;
     }
 
     public String startTimer(){
@@ -98,8 +99,13 @@ public class TiMeTimer extends TimerTask {
         return getName() + " paused";
     }
 
+    public void showMessage(Context context, String message){
+        Toast.makeText(context,getName() + " finished working", Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     public void run() {
+        String TAG = "TiMeTimer";
         Log.e(TAG, getId() + " " + getName() + " run " + isTicking() + " time: " + time);
         if(isTicking()){
             time--;
@@ -107,7 +113,6 @@ public class TiMeTimer extends TimerTask {
             minutes = (time%(MAX_SECONDS*MAX_MINUTES))/MAX_SECONDS;
             seconds = time%MAX_SECONDS;
             if(time==0){
-                setFinished(true);
                 resetTimer();
             }
         }
