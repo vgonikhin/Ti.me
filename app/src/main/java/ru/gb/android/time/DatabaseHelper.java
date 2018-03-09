@@ -31,18 +31,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         + COLUMN_TICKING + " NUMBER, "
                         + COLUMN_START_HOURS + " NUMBER, "
                         + COLUMN_START_MINUTES + " NUMBER, "
-                        + COLUMN_START_SECONDS + " NUMBER);");
+                        + COLUMN_START_SECONDS + " NUMBER,"
+                        + COLUMN_CURRENT_HOURS + " NUMBER,"
+                        + COLUMN_CURRENT_MINUTES + " NUMBER,"
+                        + COLUMN_CURRENT_SECONDS + " NUMBER);");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if(oldVersion==2 && newVersion==3) {
-            db.execSQL("ALTER TABLE " + TABLE_TIMERS + " ADD "
-                    + COLUMN_CURRENT_HOURS + " NUMBER;");
-            db.execSQL("ALTER TABLE " + TABLE_TIMERS + " ADD "
-                    + COLUMN_CURRENT_MINUTES + " NUMBER;");
-            db.execSQL("ALTER TABLE " + TABLE_TIMERS + " ADD "
-                    + COLUMN_CURRENT_SECONDS + " NUMBER;");
-        }
+
     }
 }

@@ -3,7 +3,6 @@ package ru.gb.android.time;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -25,7 +24,7 @@ public class StartedService extends IntentService {
             s = bundle.getString("ServiceParameter", "fail");
         }
         timer = new Timer();
-        for(TiMeTimer t : MainActivity.elements){
+        for(TiMeTimer t : MainActivity.tm.getElements()){
             timer.schedule(t,1000,1000);
         }
     }

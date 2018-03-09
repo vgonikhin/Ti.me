@@ -27,24 +27,20 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.List;
 import java.util.Locale;
-import java.util.Timer;
 
 import static android.widget.LinearLayout.VERTICAL;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    static List<TiMeTimer> elements;
     RecyclerView.Adapter<MyViewHolder> adapter;
-    Timer timer;
+    public static TimerManager tm;
 
     RecyclerView recyclerView;
     Toolbar toolbar;
     FloatingActionButton fab;
     DrawerLayout drawer;
     NavigationView navigationView;
-    TimerDataSource tds;
 
     private class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -68,10 +64,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         void bind(int position) {
-            nameTextView.setText(elements.get(position).getName());
-            timerTextView.setText(elements.get(position).getCurrentTime());
+            nameTextView.setText(tm.getElements().get(position).getName());
+            timerTextView.setText(tm.getElements().get(position).getCurrentTime());
             setStartPauseVisibility();
-            this.id = elements.get(position).getId();
+            this.id = tm.getElements().get(position).getId();
         }
 
         @Override
@@ -83,13 +79,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Toast.makeText(MainActivity.this.getApplicationContext(), "Clicked",Toast.LENGTH_SHORT).show();
                     return;
                 case R.id.item_start_image_button:
-                    Toast.makeText(MainActivity.this.getApplicationContext(), elements.get(this.getAdapterPosition()).startTimer(),Toast.LENGTH_SHORT).show();
-                    tds.editTimer(this.id,1);
+                    Toast.makeText(MainActivity.this.getApplicationContext(), tm.getElements().get(this.getAdapterPosition()).startTimer(),Toast.LENGTH_SHORT).show();
+                    //tds.editTimer(this.id,1);
                     setStartPauseVisibility();
                     return;
                 case R.id.item_pause_image_button:
-                    Toast.makeText(MainActivity.this.getApplicationContext(), elements.get(this.getAdapterPosition()).pauseTimer(),Toast.LENGTH_SHORT).show();
-                    tds.editTimer(this.id,0);
+                    Toast.makeText(MainActivity.this.getApplicationContext(), tm.getElements().get(this.getAdapterPosition()).pauseTimer(),Toast.LENGTH_SHORT).show();
+                    //tds.editTimer(this.id,0);
                     setStartPauseVisibility();
                     return;
                 case R.id.item_edit_image_button:
@@ -102,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         private void setStartPauseVisibility() {
-            if(!elements.get(this.getAdapterPosition()).isTicking()){
+            if(!tm.getElements().get(this.getAdapterPosition()).isTicking()){
                 startImageButton.setVisibility(View.VISIBLE);
                 pauseImageButton.setVisibility(View.INVISIBLE);
             } else {
@@ -129,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         @Override
         public int getItemCount() {
-            return elements.size();
+            return tm.getElements().size();
         }
     }
 
@@ -138,9 +134,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        tds = new TimerDataSource(this);
-        tds.open();
-        elements = tds.getAllTimers();
+        tm = new TimerManager(this);
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -247,27 +241,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void clearList() {
-        tds.deleteAll();
-        elements = tds.getAllTimers();
+        tm.clearList();
         adapter.notifyDataSetChanged();
     }
 
     private void addElement(int h, int m, int s, String name) {
-        tds.addTimer(name,h,m,s);
-        elements = tds.getAllTimers();
+        tm.addElement(h,m,s,name);
         adapter.notifyDataSetChanged();
     }
 
     private void editElement(int id, int position) {
-        tds.editTimer(id,"Edited timer", 1,2,3);
-        elements = tds.getAllTimers();
-        elements.get(position).resetTimer();
+        tm.editElement(id,position);
         adapter.notifyDataSetChanged();
     }
 
     private void deleteElement(int id) {
-        tds.deleteTimer(id);
-        elements = tds.getAllTimers();
+        tm.deleteElement(id);
         adapter.notifyDataSetChanged();
     }
 
@@ -289,15 +278,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onDestroy() {
-        tds.close();
+        tm.getTds().close();
         super.onDestroy();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(!tds.isOpen()) {
-            tds.open();
+        if(!tm.getTds().isOpen()) {
+            tm.getTds().open();
         }
     }
 
