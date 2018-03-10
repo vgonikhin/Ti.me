@@ -14,18 +14,22 @@ public class StartedService extends IntentService {
 
     public StartedService() {
         super("StartedService");
+        timer = new Timer();
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         Bundle bundle = intent.getExtras();
-        String s = "";
+        int n = 0;
         if (bundle != null) {
-            s = bundle.getString("ServiceParameter", "fail");
+            n = bundle.getInt("ServiceParameter",1);
         }
-        timer = new Timer();
-        for(TiMeTimer t : MainActivity.tm.getElements()){
-            timer.schedule(t,1000,1000);
+
+        if(n != 0){
+            for(TiMeTimer t : MainActivity.tm.getElements()){
+                timer.purge();
+                timer.schedule(t,1000,1000);
+            }
         }
     }
 

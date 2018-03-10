@@ -29,18 +29,34 @@ public class TimerManager {
     }
 
     public void addElement(int h, int m, int s, String name) {
+        if(elements.size()==0){
+            elements.add(new TiMeTimer(1,h,m,s,name,0));
+        } else {
+            elements.add(new TiMeTimer(tds.getNextId(), h, m, s, name, 0));
+        }
         tds.addTimer(name,h,m,s);
-        elements = tds.getAllTimers();
+        //elements = tds.getAllTimers();
     }
 
-    public void editElement(int id, int position) {
-        tds.editTimer(id,"Edited timer", 1,2,3);
-        elements = tds.getAllTimers();
-        elements.get(position).resetTimer();
+    public void editElement(int position, int h, int m, int s, String name) {
+        elements.get(position).editTimer(name,h,m,s);
+        tds.editTimer(elements.get(position).getId(),name, h,m,s);
+        //elements = tds.getAllTimers();
+        //elements.get(position).resetTimer();
     }
 
-    public void deleteElement(int id) {
-        tds.deleteTimer(id);
-        elements = tds.getAllTimers();
+    public void deleteElement(int position) {
+        elements.remove(position);
+        tds.deleteTimer(elements.get(position).getId());
+        //elements = tds.getAllTimers();
+    }
+
+    public int activeElementsNo(){
+        int number = 0;
+        for (TiMeTimer t : elements){
+            if (t.isTicking())
+                number++;
+        }
+        return number;
     }
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,10 @@ public class TimerDataSource {
             DatabaseHelper.COLUMN_CURRENT_MINUTES,
             DatabaseHelper.COLUMN_CURRENT_SECONDS,
             DatabaseHelper.COLUMN_TICKING
+    };
+
+    private String[] timersIdColumn = {
+            DatabaseHelper.COLUMN_ID
     };
 
     public TimerDataSource(Context context) {
@@ -114,4 +119,12 @@ public class TimerDataSource {
         return new TiMeTimer(cursor.getInt(0), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(1),cursor.getInt(8));
     }
 
+    public int getNextId(){
+        Cursor cursor = database.query(DatabaseHelper.TABLE_TIMERS,timersIdColumn,null,null,null,null,"id desc", "1");
+        cursor.moveToFirst();
+        int lastId = cursor.getInt(0);
+        Log.w("ID", "getNextId: "+lastId);
+        cursor.close();
+        return lastId+1;
+    }
 }

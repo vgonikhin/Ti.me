@@ -60,6 +60,16 @@ public class TiMeTimer extends TimerTask {
         return String.format(Locale.ENGLISH,"%d:%02d:%02d",this.getHours(), this.getMinutes(), this.getSeconds());
     }
 
+    public void editTimer(String name, int h, int m, int s){
+        this.startHours = h;
+        this.startMinutes = m;
+        this.startSeconds = s;
+        this.time = h*MAX_MINUTES*MAX_SECONDS + m*MAX_SECONDS + s;
+        this.name = name;
+        this.ticking = false;
+        this.finished = false;
+        resetTimer();
+    }
     public int getId() {
         return id;
     }
@@ -78,6 +88,18 @@ public class TiMeTimer extends TimerTask {
 
     private int getSeconds() {
         return seconds;
+    }
+
+    public int getStartHours() {
+        return startHours;
+    }
+
+    public int getStartMinutes() {
+        return startMinutes;
+    }
+
+    public int getStartSeconds() {
+        return startSeconds;
     }
 
     public void resetTimer(){
@@ -105,8 +127,7 @@ public class TiMeTimer extends TimerTask {
 
     @Override
     public void run() {
-        String TAG = "TiMeTimer";
-        Log.e(TAG, getId() + " " + getName() + " run " + isTicking() + " time: " + time);
+        Log.d("TiMeTimer", getId() + " " + getName() + " run " + isTicking() + " time: " + time);
         if(isTicking()){
             time--;
             hours = time/(MAX_MINUTES*MAX_SECONDS);
@@ -117,4 +138,6 @@ public class TiMeTimer extends TimerTask {
             }
         }
     }
+
+
 }

@@ -33,7 +33,7 @@ import static android.widget.LinearLayout.VERTICAL;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    RecyclerView.Adapter<MyViewHolder> adapter;
+    private RecyclerView.Adapter<MyViewHolder> adapter;
     public static TimerManager tm;
 
     RecyclerView recyclerView;
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private int id;
+        //private int id;
         private TextView timerTextView, nameTextView;
         private ImageButton startImageButton, pauseImageButton, editImageButton, deleteImageButton;
 
@@ -66,12 +66,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         void bind(int position) {
             nameTextView.setText(tm.getElements().get(position).getName());
             timerTextView.setText(tm.getElements().get(position).getCurrentTime());
-            setStartPauseVisibility();
-            this.id = tm.getElements().get(position).getId();
+            updateVisibility();
+            //this.id = tm.getElements().get(position).getId();
         }
 
         @Override
         public void onClick(View view) {
+            TiMeTimer timer = tm.getElements().get(this.getAdapterPosition());
             switch (view.getId()){
                 case R.id.category_item:
                 case R.id.item_name_text_view:
@@ -79,25 +80,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Toast.makeText(MainActivity.this.getApplicationContext(), "Clicked",Toast.LENGTH_SHORT).show();
                     return;
                 case R.id.item_start_image_button:
-                    Toast.makeText(MainActivity.this.getApplicationContext(), tm.getElements().get(this.getAdapterPosition()).startTimer(),Toast.LENGTH_SHORT).show();
+                    onStartService();
+                    Toast.makeText(MainActivity.this.getApplicationContext(), timer.startTimer(),Toast.LENGTH_SHORT).show();
                     //tds.editTimer(this.id,1);
-                    setStartPauseVisibility();
+                    updateVisibility();
                     return;
                 case R.id.item_pause_image_button:
-                    Toast.makeText(MainActivity.this.getApplicationContext(), tm.getElements().get(this.getAdapterPosition()).pauseTimer(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this.getApplicationContext(), timer.pauseTimer(),Toast.LENGTH_SHORT).show();
                     //tds.editTimer(this.id,0);
-                    setStartPauseVisibility();
+                    updateVisibility();
                     return;
                 case R.id.item_edit_image_button:
-                    editElement(this.id, this.getAdapterPosition());
+                    changeElement(false, timer.getName(), this.getAdapterPosition(), timer.getStartHours(), timer.getStartMinutes(), timer.getStartSeconds());
                     return;
                 case R.id.item_delete_image_button:
-                    deleteElement(this.id);
+                    deleteElement(this.getAdapterPosition());
             }
 
         }
 
-        private void setStartPauseVisibility() {
+        private void updateVisibility() {
             if(!tm.getElements().get(this.getAdapterPosition()).isTicking()){
                 startImageButton.setVisibility(View.VISIBLE);
                 pauseImageButton.setVisibility(View.INVISIBLE);
@@ -150,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addTimer();
+                changeElement(true, "New timer");
             }
         });
 
@@ -171,47 +173,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 handler.postDelayed(this,1000);
             }
         });
-    }
-
-    private void addTimer() {
-        AlertDialog.Builder adb = new AlertDialog.Builder(this);
-        @SuppressLint("InflateParams") View v = getLayoutInflater().inflate(R.layout.dialog_add_edit,null);
-
-        final NumberPicker npHours = v.findViewById(R.id.npHours);
-        final NumberPicker npMinutes = v.findViewById(R.id.npMinutes);
-        final NumberPicker npSeconds = v.findViewById(R.id.npSeconds);
-        npHours.setMinValue(0);
-        npHours.setMaxValue(23);
-        npMinutes.setMinValue(0);
-        npMinutes.setMaxValue(59);
-        npSeconds.setMinValue(0);
-        npSeconds.setMaxValue(59);
-        NumberPicker.Formatter formatter = new NumberPicker.Formatter() {
-            @Override
-            public String format(int i) {
-                return String.format(Locale.ENGLISH,"%02d",i);
-            }
-        };
-        npMinutes.setFormatter(formatter);
-        npSeconds.setFormatter(formatter);
-
-        final EditText editText = v.findViewById(R.id.timer_name_edit_text);
-
-        adb.setPositiveButton("Add timer", new DialogInterface.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                addElement(npHours.getValue(),npMinutes.getValue(),npSeconds.getValue(), editText.getText().toString());
-            }
-        });
-        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(MainActivity.this,"Nothing added",Toast.LENGTH_SHORT).show();
-            }
-        });
-        adb.setView(v);
-        AlertDialog ad = adb.create();
-        ad.show();
     }
 
     @Override
@@ -250,8 +211,70 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         adapter.notifyDataSetChanged();
     }
 
-    private void editElement(int id, int position) {
-        tm.editElement(id,position);
+    private void changeElement(boolean isNew, String name, final int... args) {
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        @SuppressLint("InflateParams") View v = getLayoutInflater().inflate(R.layout.dialog_add_edit,null);
+
+        final TextView titleTextView = v.findViewById(R.id.title_text_view);
+        final NumberPicker npHours = v.findViewById(R.id.npHours);
+        final NumberPicker npMinutes = v.findViewById(R.id.npMinutes);
+        final NumberPicker npSeconds = v.findViewById(R.id.npSeconds);
+        npHours.setMinValue(0);
+        npHours.setMaxValue(23);
+        npMinutes.setMinValue(0);
+        npMinutes.setMaxValue(59);
+        npSeconds.setMinValue(0);
+        npSeconds.setMaxValue(59);
+        if(!isNew){
+            titleTextView.setText("EDIT TIMER");
+            npHours.setValue(args[1]);
+            npMinutes.setValue(args[2]);
+            npSeconds.setValue(args[3]);
+        } else {
+            titleTextView.setText("ADD TIMER");
+            npHours.setValue(0);
+            npMinutes.setValue(5);
+            npSeconds.setValue(0);
+        }
+        NumberPicker.Formatter formatter = new NumberPicker.Formatter() {
+            @Override
+            public String format(int i) {
+                return String.format(Locale.ENGLISH,"%02d",i);
+            }
+        };
+        npMinutes.setFormatter(formatter);
+        npSeconds.setFormatter(formatter);
+
+        final EditText editText = v.findViewById(R.id.timer_name_edit_text);
+        editText.setText(name);
+        if(isNew) {
+            adb.setPositiveButton("Add timer", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    addElement(npHours.getValue(), npMinutes.getValue(), npSeconds.getValue(), editText.getText().toString());
+                }
+            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Toast.makeText(MainActivity.this, "Nothing added", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            adb.setPositiveButton("Edit timer", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    tm.editElement(args[0], npHours.getValue(), npMinutes.getValue(), npSeconds.getValue(), editText.getText().toString());
+                }
+            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Toast.makeText(MainActivity.this, "Edit cancelled", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        adb.setView(v);
+        AlertDialog ad = adb.create();
+        ad.show();
         adapter.notifyDataSetChanged();
     }
 
@@ -292,7 +315,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void onStartService() {
         Intent intent = new Intent(getBaseContext(), StartedService.class);
-        intent.putExtra("ServiceParameter","DATA_NEED");
+        intent.putExtra("ServiceParameter",tm.activeElementsNo());
         startService(intent);
     }
 

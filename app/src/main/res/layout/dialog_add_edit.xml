@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:theme="@style/TimeTheme">
 
     <TextView
+        android:id="@+id/title_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="Enter time"
+        tools:text="Enter time"
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="@color/colorPrimaryDark"/>
@@ -17,7 +19,8 @@
         android:id="@+id/timer_name_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="New timer"/>
+        tools:text="New timer"
+        android:inputType="text" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
