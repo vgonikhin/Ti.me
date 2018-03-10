@@ -1,7 +1,5 @@
 package ru.gb.android.time;
 
-import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -10,25 +8,20 @@ import java.util.TimerTask;
 
 public class TiMeTimer extends TimerTask {
 
-    private int id;
-    private int startHours;
-    private int startMinutes;
-    private int startSeconds;
-    private int hours;
-    private int minutes;
-    private int seconds;
-
-    private int time;
-
-    private boolean ticking;
-    private boolean finished;
-
-    private String name;
-
+    //Constants
     private final int MAX_MINUTES = 60;
     private final int MAX_SECONDS = 60;
 
-    public TiMeTimer(int id, int hours, int minutes, int seconds, String name, int ticking) {
+    //Fields
+    private int id;
+    private boolean ticking;
+    private String name;
+    private int time;
+    private int startHours, startMinutes, startSeconds;
+    private int hours, minutes, seconds;
+
+    //Constructor
+    TiMeTimer(int id, int hours, int minutes, int seconds, String name, int ticking) {
         this.id = id;
         this.startHours = hours;
         this.startMinutes = minutes;
@@ -36,42 +29,20 @@ public class TiMeTimer extends TimerTask {
         this.time = hours*MAX_MINUTES*MAX_SECONDS + minutes*MAX_SECONDS + seconds;
         this.name = name;
         this.ticking = (ticking==1);
-        this.finished = false;
         resetTimer();
     }
 
-    public boolean isTicking() {
+    //Getters Setters
+    public int getId() {
+        return id;
+    }
+
+    boolean isTicking() {
         return ticking;
     }
 
-    public void setTicking(boolean ticking) {
+    private void setTicking(boolean ticking) {
         this.ticking = ticking;
-    }
-
-    public boolean isFinished() {
-        return finished;
-    }
-
-    public void setFinished(boolean finished) {
-        this.finished = finished;
-    }
-
-    public String getCurrentTime(){
-        return String.format(Locale.ENGLISH,"%d:%02d:%02d",this.getHours(), this.getMinutes(), this.getSeconds());
-    }
-
-    public void editTimer(String name, int h, int m, int s){
-        this.startHours = h;
-        this.startMinutes = m;
-        this.startSeconds = s;
-        this.time = h*MAX_MINUTES*MAX_SECONDS + m*MAX_SECONDS + s;
-        this.name = name;
-        this.ticking = false;
-        this.finished = false;
-        resetTimer();
-    }
-    public int getId() {
-        return id;
     }
 
     public String getName() {
@@ -90,54 +61,66 @@ public class TiMeTimer extends TimerTask {
         return seconds;
     }
 
-    public int getStartHours() {
+    int getStartHours() {
         return startHours;
     }
 
-    public int getStartMinutes() {
+    int getStartMinutes() {
         return startMinutes;
     }
 
-    public int getStartSeconds() {
+    int getStartSeconds() {
         return startSeconds;
     }
 
-    public void resetTimer(){
+    //Methods
+    //Current time as a String for display
+    String getCurrentTime(){
+        return String.format(Locale.ENGLISH,"%d:%02d:%02d",this.getHours(), this.getMinutes(), this.getSeconds());
+    }
+
+    //Change timer values and reset
+    void editTimer(String name, int h, int m, int s){
+        this.startHours = h;
+        this.startMinutes = m;
+        this.startSeconds = s;
+        this.time = h*MAX_MINUTES*MAX_SECONDS + m*MAX_SECONDS + s;
+        this.name = name;
+        this.ticking = false;
+        resetTimer();
+    }
+
+    //Stop timer and revert to starting values
+    private void resetTimer(){
         hours = startHours;
         minutes = startMinutes;
         seconds = startSeconds;
         time = hours*MAX_MINUTES*MAX_SECONDS + minutes*MAX_SECONDS + seconds;
         ticking = false;
-        finished = false;
     }
 
-    public String startTimer(){
+    //Activate timer
+    void startTimer(){
         setTicking(true);
-        return getName() + " started";
     }
 
-    public String pauseTimer(){
+    //Deactivate timer
+    void pauseTimer(){
         setTicking(false);
-        return getName() + " paused";
     }
 
-    public void showMessage(Context context, String message){
-        Toast.makeText(context,getName() + " finished working", Toast.LENGTH_SHORT).show();
-    }
-
+    //Process one second
     @Override
     public void run() {
         Log.d("TiMeTimer", getId() + " " + getName() + " run " + isTicking() + " time: " + time);
-        if(isTicking()){
-            time--;
+        if(isTicking()){ //If the timer is active
+            time--; //Update time, hours, minutes, seconds
             hours = time/(MAX_MINUTES*MAX_SECONDS);
             minutes = (time%(MAX_SECONDS*MAX_MINUTES))/MAX_SECONDS;
             seconds = time%MAX_SECONDS;
-            if(time==0){
+            if(time==0){ //If the timer ran out
                 resetTimer();
             }
         }
     }
-
-
 }

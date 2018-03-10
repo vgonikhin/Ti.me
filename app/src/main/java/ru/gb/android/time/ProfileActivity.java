@@ -3,7 +3,7 @@ package ru.gb.android.time;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity { //Activity for viewing and editing profile
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -16,4 +16,18 @@
     <string name="imgbtn_delete_desc">Delete</string>
     <string name="imgbtn_start_desc">Start</string>
     <string name="imgbtn_pause_desc">Pause</string>
+    <string name="addedit_dialog_title_edit">EDIT TIMER</string>
+    <string name="addedit_dialog_title_add">ADD TIMER</string>
+    <string name="delete_dialog_label">Are you sure?</string>
+    <string name="dialog_text_color">#33691e</string>
+    <string name="name_new_timer">New timer</string>
+    <string name="button_ok_addtimer">Add timer</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_ok_edittimer">Edit timer</string>
+    <string name="message_cancel_add">Nothing added</string>
+    <string name="message_cancel_edit">Edit cancelled</string>
+    <string name="button_ok_clear">Clear list</string>
+    <string name="button_ok_deletetimer">Delete timer</string>
+    <string name="message_cancel_clear">Clear list cancelled</string>
+    <string name="message_cancel_delete">Delete cancelled</string>
 </resources>

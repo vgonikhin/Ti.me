@@ -13,25 +13,36 @@ import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-public class SettingsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class SettingsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{ //Activity for managing settings and preferences
 
+    //Constants
     public static final String NOTIFICATIONS_ENABLED = "notifications_enabled";
 
-    Toolbar toolbar;
-    DrawerLayout drawer;
-    NavigationView navigationView;
-    SwitchCompat switchNotifications;
-
+    //Support elements
     private SharedPreferences sPref;
 
+    //Common GUI elements
+    private DrawerLayout drawer;
+    private SwitchCompat switchNotifications;
+
+    //Activity default methods
+
+    //Activity lifecycle
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+        setContentView(R.layout.activity_settings); //Choosing layout
 
-        sPref = getSharedPreferences("SharedPrefs", MODE_PRIVATE);
+        sPref = getSharedPreferences("SharedPrefs", MODE_PRIVATE); //Initializing support elements
 
-        toolbar = findViewById(R.id.toolbar);
+        initializeGUI(); //Initializing GUI elements
+
+        loadPrefs(); //Loading shared preferences
+    }
+
+    //Initializing GUI elements
+    private void initializeGUI(){
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.drawer_layout);
@@ -39,22 +50,21 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        navigationView = findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         switchNotifications = findViewById(R.id.set_show_notifications);
-        loadPrefs();
     }
 
     @Override
     protected void onPause(){
-        savePrefs();
+        savePrefs(); //Saving shared preferences
         super.onPause();
     }
 
     @Override
     protected void onResume() {
-        loadPrefs();
+        loadPrefs(); //Loading shared preferences
         super.onResume();
     }
 
@@ -71,11 +81,11 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.nav_timers) {
+        if (id == R.id.nav_timers) { //Go to timers (Main Activity)
             startActivity(new Intent(getApplicationContext(),MainActivity.class));
-        } else if (id == R.id.nav_profile) {
+        } else if (id == R.id.nav_profile) { //Go to profile
             startActivity(new Intent(getApplicationContext(),ProfileActivity.class));
-        } else if (id == R.id.nav_settings) {
+        } else if (id == R.id.nav_settings) { //Go to settings
             startActivity(new Intent(getApplicationContext(),SettingsActivity.class));
         }
 
@@ -83,12 +93,15 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         return true;
     }
 
+    //Methods
+    //Saving shared preferences
     private void savePrefs(){
         SharedPreferences.Editor ed = sPref.edit();
         ed.putBoolean(NOTIFICATIONS_ENABLED, switchNotifications.isChecked());
         ed.apply();
     }
 
+    //Loading shared preferences
     private void loadPrefs(){
         boolean notif = sPref.getBoolean(NOTIFICATIONS_ENABLED,false);
         switchNotifications.setChecked(notif);

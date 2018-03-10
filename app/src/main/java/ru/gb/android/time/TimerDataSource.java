@@ -5,16 +5,17 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TimerDataSource {
+class TimerDataSource { //Class for working with database
 
+    //Support elements
     private DatabaseHelper dbHelper;
     private SQLiteDatabase database;
 
+    //All columns
     private String[] timersAllColumn = {
             DatabaseHelper.COLUMN_ID,
             DatabaseHelper.COLUMN_NAME,
@@ -27,27 +28,34 @@ public class TimerDataSource {
             DatabaseHelper.COLUMN_TICKING
     };
 
+    //Column 'id'
     private String[] timersIdColumn = {
             DatabaseHelper.COLUMN_ID
     };
 
-    public TimerDataSource(Context context) {
+    //Constructor
+    TimerDataSource(Context context) {
         dbHelper = new DatabaseHelper(context);
     }
 
-    public void open() throws SQLException {
+    //Methods
+    //Open database
+    void open() throws SQLException {
         database = dbHelper.getWritableDatabase();
     }
 
-    public boolean isOpen(){
+    //Check database state
+    boolean isOpen(){
         return database.isOpen();
     }
 
-    public void close() {
+    //Close database
+    void close() {
         dbHelper.close();
     }
 
-    public void addTimer(String name, int startHours, int startMinutes, int startSeconds) {
+    //Insert new row
+    void addTimer(String name, int startHours, int startMinutes, int startSeconds) {
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.COLUMN_NAME, name);
         values.put(DatabaseHelper.COLUMN_START_HOURS, startHours);
@@ -61,69 +69,66 @@ public class TimerDataSource {
         database.insert(DatabaseHelper.TABLE_TIMERS, null, values);
     }
 
-    public void editTimer(long id, String name, int startHours, int startMinutes, int startSeconds) {
+    //Edit all columns in a row
+    void editTimer(TiMeTimer timer) {
+        ContentValues editedTimer = new ContentValues();
+        editedTimer.put(DatabaseHelper.COLUMN_ID, timer.getId());
+        editedTimer.put(DatabaseHelper.COLUMN_NAME, timer.getName());
+        editedTimer.put(DatabaseHelper.COLUMN_START_HOURS, timer.getStartHours());
+        editedTimer.put(DatabaseHelper.COLUMN_START_MINUTES, timer.getStartMinutes());
+        editedTimer.put(DatabaseHelper.COLUMN_START_SECONDS, timer.getStartSeconds());
+        editedTimer.put(DatabaseHelper.COLUMN_CURRENT_HOURS, timer.getStartHours());
+        editedTimer.put(DatabaseHelper.COLUMN_CURRENT_MINUTES, timer.getStartMinutes());
+        editedTimer.put(DatabaseHelper.COLUMN_CURRENT_SECONDS, timer.getStartSeconds());
+        editedTimer.put(DatabaseHelper.COLUMN_TICKING, 0);
+
+        database.update(DatabaseHelper.TABLE_TIMERS, editedTimer, DatabaseHelper.COLUMN_ID + "=" + timer.getId(), null);
+    }
+
+    //Edit column 'ticking' in a row
+    void editTimer(long id, int ticking) {
         ContentValues editedTimer = new ContentValues();
         editedTimer.put(DatabaseHelper.COLUMN_ID, id);
-        editedTimer.put(DatabaseHelper.COLUMN_NAME, name);
-        editedTimer.put(DatabaseHelper.COLUMN_START_HOURS, startHours);
-        editedTimer.put(DatabaseHelper.COLUMN_START_MINUTES, startMinutes);
-        editedTimer.put(DatabaseHelper.COLUMN_START_SECONDS, startSeconds);
-        editedTimer.put(DatabaseHelper.COLUMN_CURRENT_HOURS,startHours);
-        editedTimer.put(DatabaseHelper.COLUMN_CURRENT_MINUTES,startMinutes);
-        editedTimer.put(DatabaseHelper.COLUMN_CURRENT_SECONDS,startSeconds);
-        editedTimer.put(DatabaseHelper.COLUMN_TICKING,0);
+        editedTimer.put(DatabaseHelper.COLUMN_TICKING, ticking);
 
-        database.update(DatabaseHelper.TABLE_TIMERS,
-                editedTimer,
-                DatabaseHelper.COLUMN_ID + "=" + id,
-                null);
+        database.update(DatabaseHelper.TABLE_TIMERS, editedTimer, DatabaseHelper.COLUMN_ID + "=" + id, null);
     }
 
-    public void editTimer(long id, int ticking) {
-        ContentValues editedTimer = new ContentValues();
-        editedTimer.put(DatabaseHelper.COLUMN_ID, id);
-        editedTimer.put(DatabaseHelper.COLUMN_TICKING,ticking);
-
-        database.update(DatabaseHelper.TABLE_TIMERS,
-                editedTimer,
-                DatabaseHelper.COLUMN_ID + "=" + id,
-                null);
+    //Delete one row
+    void deleteTimer(TiMeTimer timer) {
+        database.delete(DatabaseHelper.TABLE_TIMERS, DatabaseHelper.COLUMN_ID + " = " + timer.getId(), null);
     }
 
-    public void deleteTimer(long id) {
-        database.delete(DatabaseHelper.TABLE_TIMERS, DatabaseHelper.COLUMN_ID
-                + " = " + id, null);
-    }
-
-    public void deleteAll() {
+    //Delete all rows
+    void deleteAll() {
         database.delete(DatabaseHelper.TABLE_TIMERS, null, null);
     }
 
-    public List<TiMeTimer> getAllTimers() {
-        List<TiMeTimer> timers = new ArrayList<>();
+    //Read all timers from database
+    List<TiMeTimer> getAllTimers() {
+        List<TiMeTimer> timers = new ArrayList<>(); //Prepare list
 
-        Cursor cursor = database.query(DatabaseHelper.TABLE_TIMERS,
-                timersAllColumn, null, null, null, null, null);
-
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            TiMeTimer tiMeTimer = cursorToTimer(cursor);
-            timers.add(tiMeTimer);
+        Cursor cursor = database.query(DatabaseHelper.TABLE_TIMERS, timersAllColumn, null, null, null, null, null); //Query database
+        cursor.moveToFirst(); // Starting position
+        while (!cursor.isAfterLast()) { //Cycle through all rows
+            TiMeTimer tiMeTimer = cursorToTimer(cursor); //Instantiate timer from database row
+            timers.add(tiMeTimer); //Add timer to list
             cursor.moveToNext();
         }
         cursor.close();
         return timers;
     }
 
+    //Instantiate timer from database row
     private TiMeTimer cursorToTimer(Cursor cursor) {
         return new TiMeTimer(cursor.getInt(0), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(1),cursor.getInt(8));
     }
 
-    public int getNextId(){
-        Cursor cursor = database.query(DatabaseHelper.TABLE_TIMERS,timersIdColumn,null,null,null,null,"id desc", "1");
-        cursor.moveToFirst();
-        int lastId = cursor.getInt(0);
-        Log.w("ID", "getNextId: "+lastId);
+    //Determine the biggest id in the database
+    int getNextId(){
+        Cursor cursor = database.query(DatabaseHelper.TABLE_TIMERS,timersIdColumn,null,null,null,null,"id desc", "1"); //Query for id in the row with the biggest id
+        cursor.moveToFirst(); //Starting position
+        int lastId = cursor.getInt(0); //Get int value of the biggest id
         cursor.close();
         return lastId+1;
     }
